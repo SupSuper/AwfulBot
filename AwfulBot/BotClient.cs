@@ -10,23 +10,18 @@ namespace AwfulBot
 {
     public class BotClient
 	{
-		private BotConfig config;
+		public BotConfig Config { get; private set; }
 
-		private DiscordClient discord;
-		private CommandsNextModule commands;
+		private readonly DiscordClient discord;
+		private readonly CommandsNextModule commands;
 
 	    public BotClient()
 	    {
-			// Load config
-		    XmlSerializer ser = new XmlSerializer(typeof(BotConfig));
-		    using (Stream stream = new FileStream("Resources/Config.xml", FileMode.Open))
-		    {
-			    config = ser.Deserialize(stream) as BotConfig;
-		    }
+		    LoadConfig();
 			
 		    discord = new DiscordClient(new DiscordConfiguration
 		    {
-			    Token = config.Token,
+			    Token = Config.Token,
 			    TokenType = TokenType.Bot,
 				
 			    LogLevel = LogLevel.Debug,
@@ -34,9 +29,13 @@ namespace AwfulBot
 			});
 
 			// Set up commands
+			var dependencyBuilder = new DependencyCollectionBuilder();
+		    dependencyBuilder.AddInstance(this);
+
 		    commands = discord.UseCommandsNext(new CommandsNextConfiguration()
 		    {
-				StringPrefix = config.CommandPrefix
+				StringPrefix = Config.CommandPrefix,
+				Dependencies = dependencyBuilder.Build()
 		    });
 			
 		    commands.RegisterCommands<BasicCommands>();
@@ -73,6 +72,15 @@ namespace AwfulBot
 		    {
 			    await this.Stop();
 		    };
+		}
+
+		public void LoadConfig()
+		{
+			XmlSerializer ser = new XmlSerializer(typeof(BotConfig));
+			using (Stream stream = new FileStream("Resources/Config.xml", FileMode.Open))
+			{
+				Config = ser.Deserialize(stream) as BotConfig;
+			}
 		}
 
 	    public async Task Start()

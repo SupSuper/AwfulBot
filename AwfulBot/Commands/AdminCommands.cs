@@ -21,12 +21,25 @@ namespace AwfulBot.Commands
 			await ctx.Client.ReconnectAsync();
 		}
 
+		[Command("reload")]
+		[Description("Reload config")]
+		public async Task ReloadConfig(CommandContext ctx)
+		{
+			await ctx.TriggerTypingAsync();
+
+			var bot = ctx.Dependencies.GetDependency<BotClient>();
+			bot.LoadConfig();
+
+			await ctx.RespondAsync("Reload successful");
+		}
+
 		[Command("quit")]
 		[Description("Disconnect and exit bot")]
 		[Aliases("kill")]
 		public async Task Quit(CommandContext ctx)
 		{
-			await ctx.Client.DisconnectAsync();
+			var bot = ctx.Dependencies.GetDependency<BotClient>();
+			await bot.Stop();
 			Environment.Exit(0);
 		}
 	}
