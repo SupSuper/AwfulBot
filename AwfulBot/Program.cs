@@ -1,34 +1,17 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DSharpPlus;
 
 namespace AwfulBot
 {
-    class Program
+    internal class Program
     {
-	    static DiscordClient discord;
+	    private static BotClient bot;
 
 		static async Task Main(string[] args)
-        {
-			await MainAsync();
+		{
+			bot = new BotClient();
+			await bot.Connect();
+			await Task.Delay(-1);
 		}
-
-	    static async Task MainAsync()
-	    {
-		    discord = new DiscordClient(new DiscordConfiguration
-		    {
-			    Token = "<your token here>",
-			    TokenType = TokenType.Bot
-		    });
-
-		    discord.MessageCreated += async e =>
-		    {
-			    if (e.Message.Content.ToLower().StartsWith(".ping"))
-				    await e.Message.RespondAsync("pong!");
-		    };
-
-		    await discord.ConnectAsync();
-		    await Task.Delay(-1);
-	    }
 	}
 }
