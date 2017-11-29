@@ -27,16 +27,20 @@ namespace AwfulBot
 			    LogLevel = LogLevel.Debug,
 			    UseInternalLogHandler = true
 			});
+		    discord.Ready += async (e) =>
+		    {
+			    e.Client.DebugLogger.LogMessage(LogLevel.Info, "AwfulBot", "Client is ready to process events.", DateTime.Now);
+			    await Task.CompletedTask;
+		    };
+		    discord.ClientErrored += async (e) =>
+		    {
+			    e.Client.DebugLogger.LogMessage(LogLevel.Error, "AwfulBot", $"Exception occured: {e.Exception.GetType()}: {e.Exception.Message}", DateTime.Now);
+			    await Task.CompletedTask;
+			};
 
 		    AppDomain.CurrentDomain.ProcessExit += async (sender, e) =>
 		    {
-				await this.Disconnect();
-		    };
-
-		    discord.MessageCreated += async e =>
-		    {
-			    if (e.Message.Content.ToLower().StartsWith(".ping"))
-				    await e.Message.RespondAsync("pong!");
+			    await this.Disconnect();
 		    };
 		}
 
