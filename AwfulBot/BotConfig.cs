@@ -6,5 +6,6 @@ namespace AwfulBot
 	public class BotConfig
 	{
 		public string Token;
+		public string CommandPrefix;
 	}
 }

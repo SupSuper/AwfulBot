@@ -10,7 +10,7 @@ namespace AwfulBot
 		static async Task Main(string[] args)
 		{
 			bot = new BotClient();
-			await bot.Connect();
+			await bot.Start();
 			await Task.Delay(-1);
 		}
 	}
